@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using TaskList.Core.Repositories;
 using TaskList.Infrastructure.DataAccess;
+using TaskList.Infrastructure.DataAccess.Repositories;
 using TaskList.Infrastructure.DataAccess.Settings;
 
 namespace TaskList.Infrastructure;
@@ -21,6 +23,9 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IMongoContext, MongoContext>();
+
+        services.AddScoped<ITaskListRepository, TaskListRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TaskList.Core\TaskList.Core.csproj" />
     <ProjectReference Include="..\TaskList.Domain\TaskList.Domain.csproj" />
   </ItemGroup>
 
