@@ -2,7 +2,7 @@
 using TaskList.Core.Dtos.UserDtos;
 using TaskList.Core.Mappers;
 using TaskList.Core.Repositories;
-using TaskList.Core.Result;
+using TaskList.Core.Results;
 
 namespace TaskList.Core.Services.Users;
 

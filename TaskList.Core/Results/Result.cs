@@ -1,4 +1,4 @@
-﻿namespace TaskList.Core.Result;
+﻿namespace TaskList.Core.Results;
 
 public class Result
 {
@@ -14,7 +14,7 @@ public class Result
         ErrorType = errorType;
     }
 
-    public static Result Sucess() => new(true, null, null);
+    public static Result Success() => new(true, null, null);
     public static Result Failure(string error, ResultErrorType errorType) => new(false, error, errorType);
 }
 

@@ -1,4 +1,6 @@
-﻿using TaskList.Core.Dtos.UserDtos;
+﻿using System.Threading.Tasks;
+using TaskList.Core.Dtos.TaskListDtos;
+using TaskList.Core.Dtos.UserDtos;
 using TaskList.Domain.Users;
 
 namespace TaskList.Core.Mappers;
@@ -20,4 +22,7 @@ public static class UserManualMapper
             FirstName = user.FirstName,
             LastName = user.LastName,
         };
+
+    public static List<UserResponseDto> UsersToResponses(this IEnumerable<User> users) =>
+        users.Select(u => u.UserToResponse()).ToList();
 }

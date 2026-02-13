@@ -1,5 +1,5 @@
 ﻿using TaskList.Core.Dtos.UserDtos;
-using TaskList.Core.Result;
+using TaskList.Core.Results;
 
 namespace TaskList.Core.Services.Users;
 

@@ -23,4 +23,7 @@ public static class TaskListManualMapper
             CreatedAtUTC = DateTime.Now,
             OwnerId = createDto.OwnerId,
         };
+
+    public static List<TaskListResponseDto> TaskListsToResponses(this IEnumerable<Tasks> taskLists) =>
+        taskLists.Select(tl => tl.TaskListToResponse()).ToList();
 }

@@ -3,18 +3,14 @@ using TaskList.Core.Dtos.TaskListDtos;
 
 namespace TaskList.Core.Validators.TaskListValidators;
 
-public class CreateTaskListDtoValidator : AbstractValidator<CreateTaskListDto>
+public class UpdateTaskListDtoValidator : AbstractValidator<UpdateTaskListDto>
 {
-    public CreateTaskListDtoValidator()
+    public UpdateTaskListDtoValidator()
     {
-        RuleFor(ctl => ctl.Name)
+        RuleFor(utl => utl.NewName)
             .NotEmpty()
             .WithMessage("Name is required")
             .Length(1, 255)
             .WithMessage("Name length must be from 1 up to 255 characters");
-
-        RuleFor(ctl => ctl.OwnerId)
-            .NotEmpty()
-            .WithMessage("Owner id is required");
     }
 }

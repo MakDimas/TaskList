@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskList.Core.Dtos.UserDtos;
+using TaskList.Core.Results;
 using TaskList.Core.Services.Users;
 
 namespace TaskList.WebApi.Controllers;
@@ -18,10 +19,7 @@ public class UserController : BaseController
     {
         var getResult = await _userService.GetUserByIdAsync(userId, ct);
 
-        if (getResult.IsFailure)
-            return BadRequest(getResult.Error);
-
-        return Ok(getResult.Value);
+        return getResult.ToActionResult();
     }
 
     [HttpPost]
@@ -29,9 +27,6 @@ public class UserController : BaseController
     {
         var createResult = await _userService.CreateUserAsync(userDto, ct);
 
-        if (createResult.IsFailure)
-            return BadRequest(createResult.Error);
-
-        return Ok(createResult.Value);
+        return createResult.ToActionResult();
     }
 }
