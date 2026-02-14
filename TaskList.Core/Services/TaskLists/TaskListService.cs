@@ -18,7 +18,8 @@ public class TaskListService : ITaskListService
         _userRepository = userRepository;
     }
 
-    public async Task<Result<TaskListResponseDto>> CreateTaskListAsync(CreateTaskListDto taskListDto, CancellationToken ct)
+    public async Task<Result<TaskListResponseDto>> CreateTaskListAsync(
+        CreateTaskListDto taskListDto, CancellationToken ct)
     {
         var userExist = await _userRepository
             .GetUserByIdAsync(taskListDto.OwnerId, ct) != null;
@@ -40,7 +41,8 @@ public class TaskListService : ITaskListService
         return Result<TaskListResponseDto>.Success(taskListResponseDto);
     }
 
-    public async Task<Result<TaskListResponseDto>> GetTaskListByIdAsync(TaskListOwnerModel queryModel, CancellationToken ct)
+    public async Task<Result<TaskListResponseDto>> GetTaskListByIdAsync(
+        TaskListOwnerModel queryModel, CancellationToken ct)
     {
         var taskList = await _taskListRepository
             .GetTaskListByIdAsync(queryModel.TaskListId, ct);
@@ -65,21 +67,22 @@ public class TaskListService : ITaskListService
         return Result<TaskListResponseDto>.Success(taskListResponse);
     }
 
-    public async Task<Result> DeleteTaskListAsync(TaskListOwnerModel queryModel, CancellationToken ct)
+    public async Task<Result<string>> DeleteTaskListAsync(
+        TaskListOwnerModel queryModel, CancellationToken ct)
     {
         var taskList = await _taskListRepository
             .GetTaskListByIdAsync(queryModel.TaskListId, ct);
 
         if (taskList == null)
         {
-            return Result.Failure(
+            return Result<string>.Failure(
                 $"Task list with id: {queryModel.TaskListId} was not found",
                 ResultErrorType.NotFound);
         }
 
         if (taskList.OwnerId != queryModel.CurrentUserId)
         {
-            return Result.Failure(
+            return Result<string>.Failure(
                 $"Current user doesn't have access to this resource",
                 ResultErrorType.Forbidden);
         }
@@ -87,10 +90,11 @@ public class TaskListService : ITaskListService
         await _taskListRepository
             .DeleteTaskListAsync(queryModel.TaskListId, ct);
 
-        return Result.Success();
+        return Result<string>.Success($"Task list with id: {queryModel.TaskListId} was removed successfully");
     }
 
-    public async Task<Result<PaginationResult<TaskListResponseDto>>> GetTaskListsAsync(Guid userId, QueryParameters queryParams, CancellationToken ct)
+    public async Task<Result<PaginationResult<TaskListResponseDto>>> GetTaskListsAsync(
+        Guid userId, QueryParameters queryParams, CancellationToken ct)
     {
         var taskLists = await _taskListRepository
             .GetTaskListsAsync(userId, queryParams, ct);
@@ -105,14 +109,15 @@ public class TaskListService : ITaskListService
 
         var taskListsResult = taskLists.TaskListsToResponses();
 
-        return Result<PaginationResult<TaskListResponseDto>>.Success(new PaginationResult<TaskListResponseDto>
+        return Result<PaginationResult<TaskListResponseDto>>.Success(new()
         {
             Items = taskListsResult,
             TotalCount = taskListsResult.Count
         });
     }
 
-    public async Task<Result<TaskListResponseDto>> UpdateTasklistAsync(UpdateTaskListDto updateDto, CancellationToken ct)
+    public async Task<Result<TaskListResponseDto>> UpdateTasklistAsync(
+        UpdateTaskListDto updateDto, CancellationToken ct)
     {
         var updated = await _taskListRepository.UpdateTaskListAsync(updateDto, ct);
 
@@ -134,7 +139,8 @@ public class TaskListService : ITaskListService
             ResultErrorType.Forbidden);
     }
 
-    public async Task<Result<List<UserResponseDto>>> GetTaskListUserLinksAsync(TaskListOwnerModel queryModel, CancellationToken ct)
+    public async Task<Result<List<UserResponseDto>>> GetTaskListUserLinksAsync(
+        TaskListOwnerModel queryModel, CancellationToken ct)
     {
         var linkedUsers = await _taskListRepository.GetTaskListUserLinksAsync(queryModel, ct);
 
@@ -151,9 +157,11 @@ public class TaskListService : ITaskListService
         return Result<List<UserResponseDto>>.Success(linkedUsers.Users.UsersToResponses());
     }
 
-    public async Task<Result<string>> ModifyTaskListSharedUsersAsync(ModifyTaskListSharedUsersDto linkDto, bool isLinkOperation, CancellationToken ct)
+    public async Task<Result<string>> ModifyTaskListSharedUsersAsync(
+        ModifyTaskListSharedUsersDto linkDto, bool isLinkOperation, CancellationToken ct)
     {
-        var (Exists, HasAccess) = await _taskListRepository.ModifyTaskListSharedUsersAsync(linkDto, isLinkOperation, ct);
+        var (Exists, HasAccess) = await _taskListRepository
+            .ModifyTaskListSharedUsersAsync(linkDto, isLinkOperation, ct);
 
         if (!Exists)
             return Result<string>.Failure(
@@ -165,6 +173,7 @@ public class TaskListService : ITaskListService
                 "Current user doesn't have access to this resource",
                 ResultErrorType.Forbidden);
 
-        return Result<string>.Success($"User with id: {linkDto.UserId} was {(isLinkOperation? "linked" : "unlinked")} successfully");
+        return Result<string>.Success(
+            $"User with id: {linkDto.UserId} was {(isLinkOperation? "linked" : "unlinked")} successfully");
     }
 }

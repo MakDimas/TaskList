@@ -9,7 +9,7 @@ public interface ITaskListService
 {
     public Task<Result<TaskListResponseDto>> CreateTaskListAsync(CreateTaskListDto taskListDto, CancellationToken ct);
     public Task<Result<TaskListResponseDto>> GetTaskListByIdAsync(TaskListOwnerModel queryModel, CancellationToken ct);
-    public Task<Result> DeleteTaskListAsync(TaskListOwnerModel queryModel, CancellationToken ct);
+    public Task<Result<string>> DeleteTaskListAsync(TaskListOwnerModel queryModel, CancellationToken ct);
     public Task<Result<PaginationResult<TaskListResponseDto>>> GetTaskListsAsync(Guid userId, QueryParameters queryParams, CancellationToken ct);
     public Task<Result<TaskListResponseDto>> UpdateTasklistAsync(UpdateTaskListDto updateDto, CancellationToken ct);
     public Task<Result<List<UserResponseDto>>> GetTaskListUserLinksAsync(TaskListOwnerModel queryModel, CancellationToken ct);
