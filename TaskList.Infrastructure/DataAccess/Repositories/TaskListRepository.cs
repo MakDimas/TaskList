@@ -18,29 +18,36 @@ public class TaskListRepository : ITaskListRepository
 
     public async Task<Tasks> CreateTaskListAsync(Tasks taskList, CancellationToken ct)
     {
-        await _mongoContext.TaskLists.InsertOneAsync(taskList, new InsertOneOptions(), ct);
+        await _mongoContext.TaskLists
+            .InsertOneAsync(taskList, new InsertOneOptions(), ct);
+
         return taskList;
     }
 
     public async Task DeleteTaskListAsync(Guid taskListId, CancellationToken ct)
     {
-        await _mongoContext.TaskLists.DeleteOneAsync(tl => tl.Id == taskListId, ct);
+        await _mongoContext.TaskLists
+            .DeleteOneAsync(tl => tl.Id == taskListId, ct);
     }
 
     public async Task<Tasks> GetTaskListByIdAsync(Guid taskListId, CancellationToken ct)
     {
-        var cursor = await _mongoContext.TaskLists.FindAsync(tl => tl.Id == taskListId, cancellationToken: ct);
+        var cursor = await _mongoContext.TaskLists
+            .FindAsync(tl => tl.Id == taskListId, cancellationToken: ct);
+
         return await cursor.FirstOrDefaultAsync(ct);
     }
 
-    public async Task<List<Tasks>> GetTaskListsAsync(Guid userId, QueryParameters queryParams, CancellationToken ct)
+    public async Task<List<Tasks>> GetTaskListsAsync(
+        Guid userId, QueryParameters queryParams, CancellationToken ct)
     {
         var pageNumber = queryParams.PageNumber < 1 ? 1 : queryParams.PageNumber;
         var pageSize = queryParams.PageSize < 1 ? 10 : queryParams.PageSize;
 
         var filter = Builders<Tasks>.Filter.Or(
             Builders<Tasks>.Filter.Eq(t => t.OwnerId, userId),
-            Builders<Tasks>.Filter.AnyEq(t => t.SharedWithUserIds, userId));
+            Builders<Tasks>.Filter.AnyEq(t => t.SharedWithUserIds, userId)
+        );
 
         var find = _mongoContext.TaskLists
             .Find(filter);
@@ -61,7 +68,8 @@ public class TaskListRepository : ITaskListRepository
         return taskLists;
     }
 
-    public async Task<(bool Exists, bool HasAccess, List<User> Users)> GetTaskListUserLinksAsync(TaskListOwnerModel queryModel, CancellationToken ct)
+    public async Task<(bool Exists, bool HasAccess, List<User> Users)> GetTaskListUserLinksAsync(
+        TaskListOwnerModel queryModel, CancellationToken ct)
     {
         var taskList = await _mongoContext.TaskLists
         .Find(tl => tl.Id == queryModel.TaskListId)
@@ -88,11 +96,12 @@ public class TaskListRepository : ITaskListRepository
         return (true, true, users);
     }
 
-    public async Task<(bool Exists, bool HasAccess)> ModifyTaskListSharedUsersAsync(ModifyTaskListSharedUsersDto linkDto, bool isLinkOperation, CancellationToken ct)
+    public async Task<(bool Exists, bool HasAccess)> ModifyTaskListSharedUsersAsync(
+        ModifyTaskListSharedUsersDto linkDto, bool isLinkOperation, CancellationToken ct)
     {
         var filter = Builders<Tasks>.Filter.And(
-        Builders<Tasks>.Filter.Eq(tl => tl.Id, linkDto.QueryModel.TaskListId),
-        Builders<Tasks>.Filter.Or(
+            Builders<Tasks>.Filter.Eq(tl => tl.Id, linkDto.QueryModel.TaskListId),
+            Builders<Tasks>.Filter.Or(
                 Builders<Tasks>.Filter.Eq(tl => tl.OwnerId, linkDto.QueryModel.CurrentUserId),
                 Builders<Tasks>.Filter.AnyEq(tl => tl.SharedWithUserIds, linkDto.QueryModel.CurrentUserId)
             )
@@ -145,6 +154,7 @@ public class TaskListRepository : ITaskListRepository
             ReturnDocument = ReturnDocument.After
         };
 
-        return await _mongoContext.TaskLists.FindOneAndUpdateAsync(filter, update, options, ct);
+        return await _mongoContext.TaskLists
+            .FindOneAndUpdateAsync(filter, update, options, ct);
     }
 }
